@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>523</string>
+	<string>526</string>
 	<key>AMApplicationVersion</key>
 	<string>2.10</string>
 	<key>AMDocumentVersion</key>
@@ -55,48 +55,62 @@
 				<key>ActionBundlePath</key>
 				<string>/System/Library/Automator/Run Shell Script.action</string>
 				<key>ActionName</key>
-				<string>Run Shell Script</string>
+				<string>Ejecutar el script Shell</string>
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>PYTHON=$(which python3)
+					<string>#!/bin/bash
 
+# Detectar Python 3
+PYTHON=$(which python3)
+if [ -z "$PYTHON" ]; then
+    echo "Error: Python3 no está instalado. Instálalo primero."
+    exit 1
+fi
+
+# Ejecutar el script Python con los argumentos proporcionados
 $PYTHON -c '
 OPENAI_KEY = ""
-MODEL = "gpt-4-0125-preview"
+MODEL = "gpt-4o-mini"
 import sys
 import os
 
+# Validar openai
 try:
     import openai
 except ImportError:
     os.system("pip3 install openai")
     import openai
-input_string = sys.argv[1]  # user
 
-system = "You are a professional expert, renowned as an exceptionally skilled and efficient English copywriter, a meticulous text editor, and an esteemed New York Times editor."
-instruction = "Fix spelling and grammar errors, improve clarity, and make sure your writing is polished and professional, keep the original voice and tone of the writing, only respond with the correct answer, no explanation is needed."
-user_message = input_string
+# Obtener instrucción del usuario usando tkinter
+# Obtener texto de entrada desde los argumentos
+input_string = sys.argv[1] if len(sys.argv) &gt; 1 else ""
 
+# Imprimir las instrucciones y el texto de entrada (depuración)
+# Mensaje del sistema genérico
+system_message = "You are a versatile AI assistant capable of performing various text-related tasks based on user instructions. Default task improve redaction on same input language. Response only with the updated content without any explanation"
 
-client = openai.OpenAI(
-    api_key=OPENAI_KEY,
-)
+# Crear el cliente de OpenAI
+client = openai.OpenAI(api_key=OPENAI_KEY)
+
+# Llamar a la API de OpenAI para obtener una respuesta
 try:
     response = client.chat.completions.create(
         model=MODEL,
         messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": instruction},
-            {"role": "user", "content": user_message},
-        ],
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": "Instruction task: Corrige y redacta mejor"},
+            {"role": "user", "content": f"Input content: {input_string}"}
+        ]
     )
+
+    # Obtener y mostrar el texto generado
     generated_text = response.choices[0].message.content
+    print(f"{generated_text.strip()}")
 
-    print(f"{input_string}\n\n{generated_text.strip()}")
+    # Mostrar el resultado en una ventana emergente de tkinter
 except Exception as e:
-    print("error", e)
-
+    print("Error en la solicitud a OpenAI:", e)
 ' "$@"</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
@@ -127,8 +141,8 @@ except Exception as e:
 				<array>
 					<string>Shell</string>
 					<string>Script</string>
-					<string>Command</string>
-					<string>Run</string>
+					<string>Comando</string>
+					<string>Ejecutar</string>
 					<string>Unix</string>
 				</array>
 				<key>OutputUUID</key>
@@ -212,7 +226,7 @@ except Exception as e:
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>691.250000:305.000000</string>
+				<string>592.250000:680.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -228,6 +242,94 @@ except Exception as e:
 		<dict/>
 		<key>applicationPaths</key>
 		<array/>
+		<key>backgroundColor</key>
+		<data>
+		YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9i
+		amVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGpCwwXGBki
+		KCkwVSRudWxs1Q0ODxAREhMUFRZWJGNsYXNzW05TQ29sb3JOYW1lXE5TQ29s
+		b3JTcGFjZV1OU0NhdGFsb2dOYW1lV05TQ29sb3KACIADEAaAAoAEVlN5c3Rl
+		bV8QEHN5c3RlbUJyb3duQ29sb3LVGhsPHA0dHh8gElxOU0NvbXBvbmVudHNV
+		TlNSR0JfEBJOU0N1c3RvbUNvbG9yU3BhY2VNMC42IDAuNCAwLjIgMU8QJzAu
+		NTI1NTE4ODk0MiAwLjMyNTQzNTM0MDQgMC4xNTIxNjIxNjQ0ABABgAWACNMj
+		JA0lJidUTlNJRFVOU0lDQxAHgAaAB08RDEgAAAxITGlubwIQAABtbnRyUkdC
+		IFhZWiAHzgACAAkABgAxAABhY3NwTVNGVAAAAABJRUMgc1JHQgAAAAAAAAAA
+		AAAAAAAA9tYAAQAAAADTLUhQICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAABFjcHJ0AAABUAAAADNkZXNjAAABhAAA
+		AGx3dHB0AAAB8AAAABRia3B0AAACBAAAABRyWFlaAAACGAAAABRnWFlaAAAC
+		LAAAABRiWFlaAAACQAAAABRkbW5kAAACVAAAAHBkbWRkAAACxAAAAIh2dWVk
+		AAADTAAAAIZ2aWV3AAAD1AAAACRsdW1pAAAD+AAAABRtZWFzAAAEDAAAACR0
+		ZWNoAAAEMAAAAAxyVFJDAAAEPAAACAxnVFJDAAAEPAAACAxiVFJDAAAEPAAA
+		CAx0ZXh0AAAAAENvcHlyaWdodCAoYykgMTk5OCBIZXdsZXR0LVBhY2thcmQg
+		Q29tcGFueQAAZGVzYwAAAAAAAAASc1JHQiBJRUM2MTk2Ni0yLjEAAAAAAAAA
+		AAAAABJzUkdCIElFQzYxOTY2LTIuMQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWFlaIAAAAAAAAPNRAAEAAAAB
+		FsxYWVogAAAAAAAAAAAAAAAAAAAAAFhZWiAAAAAAAABvogAAOPUAAAOQWFla
+		IAAAAAAAAGKZAAC3hQAAGNpYWVogAAAAAAAAJKAAAA+EAAC2z2Rlc2MAAAAA
+		AAAAFklFQyBodHRwOi8vd3d3LmllYy5jaAAAAAAAAAAAAAAAFklFQyBodHRw
+		Oi8vd3d3LmllYy5jaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAABkZXNjAAAAAAAAAC5JRUMgNjE5NjYtMi4xIERlZmF1
+		bHQgUkdCIGNvbG91ciBzcGFjZSAtIHNSR0IAAAAAAAAAAAAAAC5JRUMgNjE5
+		NjYtMi4xIERlZmF1bHQgUkdCIGNvbG91ciBzcGFjZSAtIHNSR0IAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAZGVzYwAAAAAAAAAsUmVmZXJlbmNlIFZpZXdpbmcg
+		Q29uZGl0aW9uIGluIElFQzYxOTY2LTIuMQAAAAAAAAAAAAAALFJlZmVyZW5j
+		ZSBWaWV3aW5nIENvbmRpdGlvbiBpbiBJRUM2MTk2Ni0yLjEAAAAAAAAAAAAA
+		AAAAAAAAAAAAAAAAAAAAAHZpZXcAAAAAABOk/gAUXy4AEM8UAAPtzAAEEwsA
+		A1yeAAAAAVhZWiAAAAAAAEwJVgBQAAAAVx/nbWVhcwAAAAAAAAABAAAAAAAA
+		AAAAAAAAAAAAAAAAAo8AAAACc2lnIAAAAABDUlQgY3VydgAAAAAAAAQAAAAA
+		BQAKAA8AFAAZAB4AIwAoAC0AMgA3ADsAQABFAEoATwBUAFkAXgBjAGgAbQBy
+		AHcAfACBAIYAiwCQAJUAmgCfAKQAqQCuALIAtwC8AMEAxgDLANAA1QDbAOAA
+		5QDrAPAA9gD7AQEBBwENARMBGQEfASUBKwEyATgBPgFFAUwBUgFZAWABZwFu
+		AXUBfAGDAYsBkgGaAaEBqQGxAbkBwQHJAdEB2QHhAekB8gH6AgMCDAIUAh0C
+		JgIvAjgCQQJLAlQCXQJnAnECegKEAo4CmAKiAqwCtgLBAssC1QLgAusC9QMA
+		AwsDFgMhAy0DOANDA08DWgNmA3IDfgOKA5YDogOuA7oDxwPTA+AD7AP5BAYE
+		EwQgBC0EOwRIBFUEYwRxBH4EjASaBKgEtgTEBNME4QTwBP4FDQUcBSsFOgVJ
+		BVgFZwV3BYYFlgWmBbUFxQXVBeUF9gYGBhYGJwY3BkgGWQZqBnsGjAadBq8G
+		wAbRBuMG9QcHBxkHKwc9B08HYQd0B4YHmQesB78H0gflB/gICwgfCDIIRgha
+		CG4IggiWCKoIvgjSCOcI+wkQCSUJOglPCWQJeQmPCaQJugnPCeUJ+woRCicK
+		PQpUCmoKgQqYCq4KxQrcCvMLCwsiCzkLUQtpC4ALmAuwC8gL4Qv5DBIMKgxD
+		DFwMdQyODKcMwAzZDPMNDQ0mDUANWg10DY4NqQ3DDd4N+A4TDi4OSQ5kDn8O
+		mw62DtIO7g8JDyUPQQ9eD3oPlg+zD88P7BAJECYQQxBhEH4QmxC5ENcQ9RET
+		ETERTxFtEYwRqhHJEegSBxImEkUSZBKEEqMSwxLjEwMTIxNDE2MTgxOkE8UT
+		5RQGFCcUSRRqFIsUrRTOFPAVEhU0FVYVeBWbFb0V4BYDFiYWSRZsFo8WshbW
+		FvoXHRdBF2UXiReuF9IX9xgbGEAYZRiKGK8Y1Rj6GSAZRRlrGZEZtxndGgQa
+		KhpRGncanhrFGuwbFBs7G2MbihuyG9ocAhwqHFIcexyjHMwc9R0eHUcdcB2Z
+		HcMd7B4WHkAeah6UHr4e6R8THz4faR+UH78f6iAVIEEgbCCYIMQg8CEcIUgh
+		dSGhIc4h+yInIlUigiKvIt0jCiM4I2YjlCPCI/AkHyRNJHwkqyTaJQklOCVo
+		JZclxyX3JicmVyaHJrcm6CcYJ0kneierJ9woDSg/KHEooijUKQYpOClrKZ0p
+		0CoCKjUqaCqbKs8rAis2K2krnSvRLAUsOSxuLKIs1y0MLUEtdi2rLeEuFi5M
+		LoIuty7uLyQvWi+RL8cv/jA1MGwwpDDbMRIxSjGCMbox8jIqMmMymzLUMw0z
+		RjN/M7gz8TQrNGU0njTYNRM1TTWHNcI1/TY3NnI2rjbpNyQ3YDecN9c4FDhQ
+		OIw4yDkFOUI5fzm8Ofk6Njp0OrI67zstO2s7qjvoPCc8ZTykPOM9Ij1hPaE9
+		4D4gPmA+oD7gPyE/YT+iP+JAI0BkQKZA50EpQWpBrEHuQjBCckK1QvdDOkN9
+		Q8BEA0RHRIpEzkUSRVVFmkXeRiJGZ0arRvBHNUd7R8BIBUhLSJFI10kdSWNJ
+		qUnwSjdKfUrESwxLU0uaS+JMKkxyTLpNAk1KTZNN3E4lTm5Ot08AT0lPk0/d
+		UCdQcVC7UQZRUFGbUeZSMVJ8UsdTE1NfU6pT9lRCVI9U21UoVXVVwlYPVlxW
+		qVb3V0RXklfgWC9YfVjLWRpZaVm4WgdaVlqmWvVbRVuVW+VcNVyGXNZdJ114
+		XcleGl5sXr1fD19hX7NgBWBXYKpg/GFPYaJh9WJJYpxi8GNDY5dj62RAZJRk
+		6WU9ZZJl52Y9ZpJm6Gc9Z5Nn6Wg/aJZo7GlDaZpp8WpIap9q92tPa6dr/2xX
+		bK9tCG1gbbluEm5rbsRvHm94b9FwK3CGcOBxOnGVcfByS3KmcwFzXXO4dBR0
+		cHTMdSh1hXXhdj52m3b4d1Z3s3gReG54zHkqeYl553pGeqV7BHtje8J8IXyB
+		fOF9QX2hfgF+Yn7CfyN/hH/lgEeAqIEKgWuBzYIwgpKC9INXg7qEHYSAhOOF
+		R4Wrhg6GcobXhzuHn4gEiGmIzokziZmJ/opkisqLMIuWi/yMY4zKjTGNmI3/
+		jmaOzo82j56QBpBukNaRP5GokhGSepLjk02TtpQglIqU9JVflcmWNJaflwqX
+		dZfgmEyYuJkkmZCZ/JpomtWbQpuvnByciZz3nWSd0p5Anq6fHZ+Ln/qgaaDY
+		oUehtqImopajBqN2o+akVqTHpTilqaYapoum/adup+CoUqjEqTepqaocqo+r
+		Aqt1q+msXKzQrUStuK4trqGvFq+LsACwdbDqsWCx1rJLssKzOLOutCW0nLUT
+		tYq2AbZ5tvC3aLfguFm40blKucK6O7q1uy67p7whvJu9Fb2Pvgq+hL7/v3q/
+		9cBwwOzBZ8Hjwl/C28NYw9TEUcTOxUvFyMZGxsPHQce/yD3IvMk6ybnKOMq3
+		yzbLtsw1zLXNNc21zjbOts83z7jQOdC60TzRvtI/0sHTRNPG1EnUy9VO1dHW
+		VdbY11zX4Nhk2OjZbNnx2nba+9uA3AXcit0Q3ZbeHN6i3ynfr+A24L3hROHM
+		4lPi2+Nj4+vkc+T85YTmDeaW5x/nqegy6LzpRunQ6lvq5etw6/vshu0R7Zzu
+		KO6070DvzPBY8OXxcvH/8ozzGfOn9DT0wvVQ9d72bfb794r4Gfio+Tj5x/pX
+		+uf7d/wH/Jj9Kf26/kv+3P9t///SKissLVokY2xhc3NuYW1lWCRjbGFzc2Vz
+		XE5TQ29sb3JTcGFjZaIuL1xOU0NvbG9yU3BhY2VYTlNPYmplY3TSKisxMldO
+		U0NvbG9yojEvAAgAEQAaACQAKQAyADcASQBMAFEAUwBdAGMAbgB1AIEAjgCc
+		AKQApgCoAKoArACuALUAyADTAOAA5gD7AQkBMwE1ATcBOQFAAUUBSwFNAU8B
+		UQ2dDaINrQ22DcMNxg3TDdwN4Q3pAAAAAAAAAgEAAAAAAAAAMwAAAAAAAAAA
+		AAAAAAAADew=
+		</data>
+		<key>backgroundColorName</key>
+		<string>systemBrownColor</string>
 		<key>inputTypeIdentifier</key>
 		<string>com.apple.Automator.text</string>
 		<key>outputTypeIdentifier</key>
@@ -243,7 +345,7 @@ except Exception as e:
 		<key>serviceProcessesInput</key>
 		<false/>
 		<key>systemImageName</key>
-		<string>NSActionTemplate</string>
+		<string>NSTouchBarWork</string>
 		<key>useAutomaticInputType</key>
 		<false/>
 		<key>workflowTypeIdentifier</key>
